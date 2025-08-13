@@ -4,7 +4,7 @@ import pandas as pd
 import ssl
 import urllib3
 
-app = Flask(__name__)
+app = Flask(__name__)  # fixed here
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -84,6 +84,9 @@ def get_net_income(info):
             return info[key]
     return None
 
+# ----------------------------
+# HOME ROUTE (INLINE HTML)
+# ----------------------------
 @app.route('/')
 def home():
     return render_template_string("""
@@ -122,10 +125,14 @@ def home():
     </html>
     """, font_family=FONT_FAMILY, white=WHITE, deep_blue=DEEP_BLUE, tata_blue=TATA_BLUE)
 
+# ----------------------------
+# RESULT PAGE (FULL INLINE HTML + LOGIC)
+# ----------------------------
 @app.route('/result')
 def result():
     ticker = request.args.get('ticker', '').upper().strip()
     years = int(request.args.get('years', 4))
+
     if not ticker:
         return redirect(url_for('home'))
 
@@ -151,8 +158,8 @@ def result():
         "Phone": info.get("phone", "N/A"),
         "Exchange": info.get("exchange", "N/A")
     }
-    description = info.get('longBusinessSummary', 'N/A')
 
+    description = info.get('longBusinessSummary', 'N/A')
     try:
         key_execs = info.get("companyOfficers", [])
     except:
@@ -371,7 +378,6 @@ def result():
 <body>
     <h1>{{ profile['Company Name'] }}</h1>
     <div class="ticker">({{ ticker }})</div>
-
     <div class="container-flex">
         <div class="profile-section">
             <h2>Company Profile</h2>
@@ -394,12 +400,10 @@ def result():
             <strong>Net Income:</strong> {{ format_number(net_income) }}
         </div>
     </div>
-
     <div class="description-section">
         <h2 class="desc-title">Description</h2>
         <p class="desc-text">{{ description }}</p>
     </div>
-
     <div class="key-personalities">
         <h2>Key Personalities</h2>
         {% if key_execs and key_execs|length > 0 %}
@@ -412,7 +416,6 @@ def result():
         <p style="color: {{ deep_blue }}">No key executive data available.</p>
         {% endif %}
     </div>
-
     <div class="section">
         <h2>Income Statement</h2>
         <table>
@@ -453,7 +456,6 @@ def result():
             </div>
         </div>
     </div>
-
     <div class="section">
         <h2>Balance Sheet</h2>
         <table>
@@ -487,7 +489,6 @@ def result():
             </div>
         </div>
     </div>
-
     <div class="section">
         <h2>Cash Flow</h2>
         <table>
@@ -521,7 +522,6 @@ def result():
             </div>
         </div>
     </div>
-
 <script>
     const labelsIncome = {{ sorted_income_years | tojson }};
     const labelsBalance = {{ sorted_balance_years | tojson }};
@@ -535,7 +535,6 @@ def result():
             y: { ticks: { font: { size: 10 } } }
         }
     };
-
     new Chart(document.getElementById('chart1'), {
         type: 'line',
         data: {
@@ -548,7 +547,6 @@ def result():
         options: commonOptions,
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart2'), {
         type: 'line',
         data: {
@@ -561,7 +559,6 @@ def result():
         options: commonOptions,
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart3'), {
         type: 'line',
         data: {
@@ -574,7 +571,6 @@ def result():
         options: commonOptions,
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart5'), {
         type: 'bar',
         data: {
@@ -604,7 +600,6 @@ def result():
         },
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart6'), {
         type: 'line',
         data: {
@@ -617,7 +612,6 @@ def result():
         options: commonOptions,
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart7'), {
         type: 'line',
         data: {
@@ -631,7 +625,6 @@ def result():
         options: commonOptions,
         plugins: [ChartDataLabels]
     });
-
     new Chart(document.getElementById('chart8'), {
         type: 'line',
         data: {
